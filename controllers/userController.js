@@ -47,3 +47,30 @@ exports.loginController = async (req, res) => {
     res.status(409).json("Invalid email.... Please register!!");
   }
 };
+
+exports.googleLoginController = async (req, res) => {
+  console.log("Inside GoogleLogin");
+  const { email, password, username, picture } = req.body;
+
+  const existingUser = await users.findOne({ email });
+  if (existingUser) {
+    const token = jwt.sign(
+      { userMail: existingUser.email, role: existingUser.role },
+      process.env.JWTSECRET,
+    );
+    res.status(200).json({ user: existingUser, token });
+  } else {
+    let encrypPassword = await bcrypt.hash(password, 10);
+    const newUser = await users.create({
+      username,
+      email,
+      password: encrypPassword,
+      picture,
+    });
+    const token = jwt.sign(
+      { userMail: newUser.email, role: newUser.role },
+      process.env.JWTSECRET,
+    );
+    res.status(200).json({ user: newUser, token });
+  }
+};
