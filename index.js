@@ -11,6 +11,8 @@ server.use(express.json());
 
 server.use(routes);
 
+server.use("/uploads", express.static("./uploads"))
+
 const PORT = process.env.PORT;
 
 server.listen(PORT, () => {
