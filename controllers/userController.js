@@ -74,3 +74,9 @@ exports.googleLoginController = async (req, res) => {
     res.status(200).json({ user: newUser, token });
   }
 };
+
+exports.userEditController = async (req, res) => {
+  console.log("Inside UserEditController");
+  console.log(req.body);
+  res.status(200).json("Received userEdit request");
+};

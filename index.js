@@ -17,6 +17,10 @@ server.listen(PORT, () => {
   console.log("Server Started....");
 });
 
+server.use((err, req, res, next) => {
+  res.status(500).json(err.message);
+});
+
 server.get("/", (req, res) => {
   res.status(200).send(`<h1> Server Started and waiting for Requests</h1>`);
 });
