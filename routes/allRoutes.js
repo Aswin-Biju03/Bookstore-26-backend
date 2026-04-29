@@ -11,7 +11,7 @@ router.post("/login", userController.loginController);
 
 router.post("/google-login", userController.googleLoginController);
 
-router.post(
+router.put(
   "/user/:id",
   authMiddleware,
   multerMiddleware.single("picture"),
