@@ -2,6 +2,7 @@ const express = require("express");
 const userController = require("../controllers/userController");
 const authMiddleware = require("../middlewares/authMiddleware");
 const multerMiddleware = require("../middlewares/multerMiddleware");
+const bookController = require("../controllers/bookController");
 
 const router = new express.Router();
 
@@ -16,6 +17,13 @@ router.put(
   authMiddleware,
   multerMiddleware.single("picture"),
   userController.userEditController,
+);
+
+router.post(
+  "/books",
+  authMiddleware,
+  multerMiddleware.array("uploadImages",3),
+  bookController.addBookController,
 );
 
 module.exports = router;
