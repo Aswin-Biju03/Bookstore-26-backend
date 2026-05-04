@@ -5,6 +5,7 @@ require("./config/db");
 const routes = require("./routes/allRoutes");
 
 const server = express();
+
 server.use(cors());
 
 server.use(express.json());

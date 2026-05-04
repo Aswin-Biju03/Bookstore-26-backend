@@ -12,6 +12,8 @@ router.post("/login", userController.loginController);
 
 router.post("/google-login", userController.googleLoginController);
 
+router.get("/home-books", bookController.getHomePageBookController);
+
 router.put(
   "/user/:id",
   authMiddleware,
@@ -22,8 +24,22 @@ router.put(
 router.post(
   "/books",
   authMiddleware,
-  multerMiddleware.array("uploadImages",3),
+  multerMiddleware.array("uploadImages", 3),
   bookController.addBookController,
+);
+
+router.get("/all-books", authMiddleware, bookController.getBooksPageController);
+
+router.get(
+  "/user-books",
+  authMiddleware,
+  bookController.getUserBooksController,
+);
+
+router.get(
+  "/bought-books",
+  authMiddleware,
+  bookController.getUserBoughtBookController,
 );
 
 module.exports = router;
