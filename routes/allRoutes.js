@@ -14,6 +14,8 @@ router.post("/google-login", userController.googleLoginController);
 
 router.get("/home-books", bookController.getHomePageBookController);
 
+router.get("/books/:id", bookController.getSingleBookController);
+
 router.put(
   "/user/:id",
   authMiddleware,
@@ -41,5 +43,7 @@ router.get(
   authMiddleware,
   bookController.getUserBoughtBookController,
 );
+
+router.delete("/books/:id", authMiddleware, bookController.removeUserUploadBooksController);
 
 module.exports = router;

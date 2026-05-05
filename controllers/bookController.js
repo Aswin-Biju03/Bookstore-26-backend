@@ -69,8 +69,10 @@ exports.getHomePageBookController = async (req, res) => {
 exports.getBooksPageController = async (req, res) => {
   console.log("Inside getBooksPageController");
   const loginUserMail = req.payload;
+  const searchKey = req.query.search;
   const allBooks = await books.find({
     sellerMail: { $ne: loginUserMail },
+    title: { $regex: searchKey, $options: "i" },
   });
   res.status(200).json(allBooks);
 };
@@ -91,4 +93,23 @@ exports.getUserBoughtBookController = async (req, res) => {
     buyerMail: loginUserMail,
   });
   res.status(200).json(userBoughtBooks);
+};
+
+exports.getSingleBookController = async (req, res) => {
+  console.log("Inside getSingleBookController");
+  const { id } = req.params;
+  const book = await books.findById(id);
+  if (!book) {
+    return res.status(404).json("Book not found");
+  }
+
+  res.status(200).json(book);
+};
+
+exports.removeUserUploadBooksController = async (req, res) => {
+  console.log("Inside removeUserUploadBooksController");
+  const loginUserMail = req.payload;
+  const { id } = req.params;
+  const removeBook = await books.findByIdAndDelete({ _id: id });
+  res.status(200).json(removeBook);
 };
