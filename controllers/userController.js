@@ -76,7 +76,7 @@ exports.googleLoginController = async (req, res) => {
 };
 
 exports.userEditController = async (req, res) => {
-  console.log("Inside UserEditController");
+  console.log("Inside Admin/UserEditController");
   const { id } = req.params;
   const email = req.payload;
   const { username, password, bio, picture, role } = req.body;
@@ -96,3 +96,4 @@ exports.userEditController = async (req, res) => {
   );
   res.status(200).json(updateUser);
 };
+

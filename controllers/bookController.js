@@ -1,4 +1,5 @@
 const books = require("../models/bookModel");
+const stripe = require("stripe")(process.env.STRIPE_SK);
 
 exports.addBookController = async (req, res) => {
   console.log("Inside addBookController");
@@ -112,4 +113,72 @@ exports.removeUserUploadBooksController = async (req, res) => {
   const { id } = req.params;
   const removeBook = await books.findByIdAndDelete({ _id: id });
   res.status(200).json(removeBook);
+};
+
+exports.paymentSuccessController = async (req, res) => {
+  try {
+    const { book_id } = req.query;
+    const bookDetails = await books.findById(book_id);
+    if (!bookDetails) return res.status(404).json("Book not found");
+    bookDetails.status = "sold";
+    await bookDetails.save();
+    res.status(200).json("Payment confirmed");
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.bookPaymentController = async (req, res) => {
+  console.log("Inside bookPaymentController");
+
+  try {
+    const buyerMail = req.payload;
+    const { id } = req.params;
+    const bookDetails = await books.findById(id);
+
+    if (!bookDetails) {
+      return res.status(404).json("Book not found");
+    }
+
+    if (bookDetails.status === "sold") {
+      return res.status(400).json("Book already sold");
+    }
+
+    const line_items = [
+      {
+        price_data: {
+          currency: "inr", // ✅ change to inr since prices are in ₹
+          product_data: {
+            name: bookDetails.title,
+            description: `${bookDetails.author}, ${bookDetails.publisher}`,
+            // ✅ removed images (causes Stripe error with local filenames)
+          },
+          unit_amount: Math.round(bookDetails.discountPrice * 100),
+        },
+        quantity: 1,
+      },
+    ];
+
+    const session = await stripe.checkout.sessions.create({
+      success_url: `http://localhost:5173/success?book_id=${id}`,
+      cancel_url: "http://localhost:5173/cancel",
+      line_items,
+      mode: "payment",
+      payment_method_types: ["card"],
+      metadata: {
+        buyerMail,
+        bookId: id,
+      },
+    });
+
+    // ✅ mark as pending, not sold yet
+    bookDetails.status = "pending";
+    bookDetails.buyerMail = buyerMail;
+    await bookDetails.save();
+
+    res.status(200).json({ checkOutURL: session.url });
+  } catch (error) {
+    console.log("Stripe Error:", error.message);
+    res.status(500).json({ error: error.message });
+  }
 };

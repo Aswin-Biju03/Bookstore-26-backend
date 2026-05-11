@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
-const connectionString = process.env.DBCONNECTIONSTRING;
+const connectionString = process.env.DBCONNECTIONSTRING?.trim();
 
 mongoose
   .connect(connectionString)
-  .then((res) => {
+  .then(() => {
     console.log("Database Connected...");
   })
   .catch((error) => {

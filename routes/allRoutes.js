@@ -3,6 +3,7 @@ const userController = require("../controllers/userController");
 const authMiddleware = require("../middlewares/authMiddleware");
 const multerMiddleware = require("../middlewares/multerMiddleware");
 const bookController = require("../controllers/bookController");
+const adminMiddleware = require("../middlewares/adminMiddleware");
 
 const router = new express.Router();
 
@@ -44,6 +45,29 @@ router.get(
   bookController.getUserBoughtBookController,
 );
 
-router.delete("/books/:id", authMiddleware, bookController.removeUserUploadBooksController);
+router.delete(
+  "/books/:id",
+  authMiddleware,
+  bookController.removeUserUploadBooksController,
+);
+
+router.put(
+  "/books/:id/buy",
+  authMiddleware,
+  bookController.bookPaymentController,
+);
+
+router.put(
+  "/profile/:id",
+  adminMiddleware,
+  multerMiddleware.single("picture"),
+  userController.userEditController,
+);  
+
+router.get(
+  "/payment-success",
+  authMiddleware,
+  bookController.paymentSuccessController,
+);
 
 module.exports = router;
