@@ -62,12 +62,18 @@ router.put(
   adminMiddleware,
   multerMiddleware.single("picture"),
   userController.userEditController,
-);  
+);
 
 router.get(
   "/payment-success",
   authMiddleware,
   bookController.paymentSuccessController,
+);
+
+router.post(
+  "/books-ai",
+  authMiddleware,
+  bookController.generateBookDetailsAIController,
 );
 
 module.exports = router;
