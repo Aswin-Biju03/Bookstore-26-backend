@@ -161,8 +161,8 @@ exports.bookPaymentController = async (req, res) => {
     ];
 
     const session = await stripe.checkout.sessions.create({
-      success_url: `http://localhost:5173/success?book_id=${id}`,
-      cancel_url: "http://localhost:5173/cancel",
+      success_url: `https://bookstore-26.vercel.app/success?book_id=${id}`,
+      cancel_url: "https://bookstore-26.vercel.app/cancel",
       line_items,
       mode: "payment",
       payment_method_types: ["card"],
@@ -191,7 +191,9 @@ exports.generateBookDetailsAIController = async (req, res) => {
   const model = genAI.getGenerativeModel({
     model: "gemini-2.5-flash",
   });
-  const result = await model.generateContent(`Give me a short abstract , author name of the book ${title} in json format`);
+  const result = await model.generateContent(
+    `Give me a short abstract , author name of the book ${title} in json format`,
+  );
   const reply = result.response;
   console.log(reply);
   res.status(200).json({
